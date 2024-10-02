@@ -1,0 +1,49 @@
+<%@ page import="java.sql.*" %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de Jogos</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Lista de Jogos</h1>
+        <a href="adicionar.jsp" class="btn btn-primary">Adicionar Novo Jogo</a>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Nome do Jogo</th>
+                    <th>Gênero</th>
+                    <th>Plataforma</th>
+                    <th>Ano de Lançamento</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%
+                    Connection conn = ConexaoDB.getConexao();
+                    String query = "SELECT * FROM jogos";
+                    Statement stmt = conn.createStatement();
+                    ResultSet rs = stmt.executeQuery(query);
+
+                    while(rs.next()) {
+                %>
+                <tr>
+                    <td><%= rs.getString("nome") %></td>
+                    <td><%= rs.getString("genero") %></td>
+                    <td><%= rs.getString("plataforma") %></td>
+                    <td><%= rs.getInt("ano_lancamento") %></td>
+                    <td>
+                        <a href="editar.jsp?id=<%= rs.getInt("id") %>" class="btn btn-warning">Editar</a>
+                        <a href="remover.jsp?id=<%= rs.getInt("id") %>" class="btn btn-danger">Remover</a>
+                    </td>
+                </tr>
+                <%
+                    }
+                %>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

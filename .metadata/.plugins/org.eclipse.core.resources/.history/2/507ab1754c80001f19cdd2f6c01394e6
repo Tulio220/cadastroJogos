@@ -1,0 +1,68 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.sql.*, java.util.*" %>
+
+<html>
+<head>
+    <title>Lista de Jogos</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h2 class="text-center">Jogos</h2>
+    <a href="add_jogo.jsp" class="btn btn-primary">Adicionar Jogo</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Plataforma</th>
+                <th>Gênero</th>
+                <th>Ano de Lançamento</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <%
+                Connection conn = null;
+                Statement stmt = null;
+                ResultSet rs = null;
+
+                try {
+                    Class.forName("com.mysql.jdbc.Driver");
+                    conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/meubanco", "usuario", "senha");
+                    stmt = conn.createStatement();
+                    rs = stmt.executeQuery("SELECT * FROM jogos");
+
+                    while (rs.next()) {
+                        int id = rs.getInt("id");
+                        String nome = rs.getString("nome");
+                        String plataforma = rs.getString("plataforma");
+                        String genero = rs.getString("genero");
+                        int anoLancamento = rs.getInt("ano_lancamento");
+            %>
+                        <tr>
+                            <td class="text-center"><%= id %></td>
+                            <td class="text-center"><%= nome %></td>
+                            <td class="text-center"><%= plataforma %></td>
+                            <td class="text-center"><%= genero %></td>
+                            <td class="text-center"><%= anoLancamento %></td>
+                            <td class="text-center">
+                                <a href="edit_jogo.jsp?id=<%= id %>" class="btn btn-warning btn-sm">Alterar</a>
+                                <a href="excluir.jsp?id=<%= id %>" class="btn btn-danger btn-sm">Excluir</a>
+                            </td>
+                        </tr>
+            <%
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    try { if (rs != null) rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+                    try { if (stmt != null) stmt.close(); } catch (SQLException e) { e.printStackTrace(); }
+                    try { if (conn != null) conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+                }
+            %>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

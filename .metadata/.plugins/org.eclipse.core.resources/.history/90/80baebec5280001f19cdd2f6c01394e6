@@ -1,0 +1,122 @@
+<%@ page import="java.sql.*" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Jogo</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f7f9fc; /* Fundo suave */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            animation: fadeIn 1s; /* Animação de entrada */
+        }
+        h2 {
+            color: #4CAF50; /* Verde suave */
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .btn-warning {
+            background-color: #ffcc00; /* Amarelo suave */
+            color: white;
+            border-radius: 5px;
+            transition: background-color 0.3s; /* Transição suave */
+        }
+        .btn-warning:hover {
+            background-color: #e6b800; /* Cor de hover mais escura */
+        }
+        .character {
+            width: 150px;
+            animation: bounce 2s infinite; /* Animação de personagem */
+            margin-bottom: 20px;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-30px);
+            }
+            60% {
+                transform: translateY(-15px);
+            }
+        }
+        .message {
+            background-color: white; /* Fundo branco para a mensagem */
+            padding: 20px;
+            border-radius: 10px; /* Bordas arredondadas */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra sutil */
+        }
+    </style>
+</head>
+<body>
+    <div class="message">
+        <img src="https://example.com/character.png" alt="Personagem" class="character" /> <!-- Insira o URL da imagem do personagem -->
+        <h2>Editar Jogo</h2>
+
+        <%
+            int id = Integer.parseInt(request.getParameter("id"));
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/jogosdb", "root", "root");
+            PreparedStatement ps = con.prepareStatement("SELECT * FROM jogos WHERE id=?");
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+        %>
+
+        <form action="edit_jogo.jsp?id=<%= id %>" method="post">
+            <div class="form-group">
+                <label for="nome">Nome:</label>
+                <input type="text" class="form-control" name="nome" value="<%= rs.getString("nome") %>" required>
+            </div>
+            <div class="form-group">
+                <label for="plataforma">Plataforma:</label>
+                <input type="text" class="form-control" name="plataforma" value="<%= rs.getString("plataforma") %>" required>
+            </div>
+            <div class="form-group">
+                <label for="genero">Gênero:</label>
+                <input type="text" class="form-control" name="genero" value="<%= rs.getString("genero") %>" required>
+            </div>
+            <div class="form-group">
+                <label for="ano_lancamento">Ano de Lançamento:</label>
+                <input type="number" class="form-control" name="ano_lancamento" value="<%= rs.getInt("ano_lancamento") %>" required>
+            </div>
+            <button type="submit" class="btn btn-warning">Atualizar</button>
+        </form>
+
+        <%
+            if (request.getMethod().equalsIgnoreCase("POST")) {
+                String nome = request.getParameter("nome");
+                String plataforma = request.getParameter("plataforma");
+                String genero = request.getParameter("genero");
+                int anoLancamento = Integer.parseInt(request.getParameter("ano_lancamento"));
+
+                PreparedStatement psUpdate = con.prepareStatement("UPDATE jogos SET nome=?, plataforma=?, genero=?, ano_lancamento=? WHERE id=?");
+                psUpdate.setString(1, nome);
+                psUpdate.setString(2, plataforma);
+                psUpdate.setString(3, genero);
+                psUpdate.setInt(4, anoLancamento);
+                psUpdate.setInt(5, id);
+                psUpdate.executeUpdate();
+
+                con.close();
+                response.sendRedirect("index.jsp");
+            }
+        %>
+    </div>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<div class="container">
+    <h1 class="my-4">Lista de Jogos</h1>
+
+    <a href="cadastrar.jsp" class="btn btn-primary mb-4">Cadastrar Novo Jogo</a> <!-- Botão para cadastrar -->
+    
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Gênero</th>
+                <th>Plataforma</th>
+                <th>Ano de Lançamento</th>
+            </tr>
+        </thead>
+        <tbody>
+            <%
+                // Código para listar os jogos como antes...
+            %>
+        </tbody>
+    </table>
+</div>

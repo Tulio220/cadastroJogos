@@ -1,0 +1,12 @@
+import javax.servlet.annotation.WebServlet;
+
+@WebServlet("/listar")
+public class ListarJogosServlet extends HttpServlet {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        List<Jogo> jogos = JogoDAO.listarJogos();
+        request.setAttribute("jogos", jogos);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("listar.jsp");
+        dispatcher.forward(request, response);
+    }
+}

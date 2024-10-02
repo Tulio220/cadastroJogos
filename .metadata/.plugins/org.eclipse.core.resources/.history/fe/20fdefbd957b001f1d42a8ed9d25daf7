@@ -1,0 +1,48 @@
+<%@ page import="java.sql.*, org.libertas.Conexao" %>
+<html>
+<head>
+    <title>Lista de Jogos</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h1 class="my-4">Lista de Jogos</h1>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Gênero</th>
+                <th>Plataforma</th>
+                <th>Ano de Lançamento</th>
+            </tr>
+        </thead>
+        <tbody>
+            <%
+                Conexao conexao = new Conexao(); // Utilizando a classe correta
+                Connection conn = conexao.getConnection();
+                String query = "SELECT * FROM jogos";
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(query);
+
+                while (rs.next()) {
+            %>
+                    <tr>
+                        <td><%= rs.getInt("id") %></td>
+                        <td><%= rs.getString("nome") %></td>
+                        <td><%= rs.getString("genero") %></td>
+                        <td><%= rs.getString("plataforma") %></td>
+                        <td><%= rs.getInt("ano_lancamento") %></td>
+                    </tr>
+            <%
+                }
+                rs.close();
+                stmt.close();
+                conexao.desconecta();
+            %>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

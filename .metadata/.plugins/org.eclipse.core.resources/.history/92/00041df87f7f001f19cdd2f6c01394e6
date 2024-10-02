@@ -1,0 +1,87 @@
+import java.io.IOException;
+import java.util.List;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/jogo")
+public class JogoServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        // Verificar qual ação está sendo solicitada
+        String action = request.getParameter("action");
+
+        if (action == null) {
+            // Se nenhuma ação for especificada, listar os jogos
+            listarJogos(request, response);
+        } else {
+            switch (action) {
+                case "listar":
+                    listarJogos(request, response);
+                    break;
+                case "editar":
+                    editarJogo(request, response);
+                    break;
+                case "deletar":
+                    deletarJogo(request, response);
+                    break;
+                default:
+                    listarJogos(request, response);
+                    break;
+            }
+        }
+    }
+
+    private void listarJogos(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        List<Jogo> jogos = JogoDAO.listarJogos();
+        request.setAttribute("jogos", jogos);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("listarJogos.jsp");
+        dispatcher.forward(request, response);
+    }
+
+    private void editarJogo(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        Jogo jogo = JogoDAO.obterJogoPorId(id);
+
+        if (jogo != null) {
+            request.setAttribute("jogo", jogo);
+            RequestDispatcher dispatcher = request.getRequestDispatcher("editarJogo.jsp");
+            dispatcher.forward(request, response);
+        } else {
+            response.sendRedirect("jogo?action=listar");
+        }
+    }
+
+    private void deletarJogo(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        JogoDAO.deletarJogo(id);
+        response.sendRedirect("jogo?action=listar");
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String id = request.getParameter("id");
+        String nome = request.getParameter("nome");
+        String genero = request.getParameter("genero");
+
+        if (id == null || id.isEmpty()) {
+            Jogo novoJogo = new Jogo(nome, genero);
+            JogoDAO.adicionarJogo(novoJogo);
+        } else {
+            int jogoId = Integer.parseInt(id);
+            Jogo jogoExistente = new Jogo(jogoId, nome, genero);
+            JogoDAO.atualizarJogo(jogoExistente);
+        }
+        
+        response.sendRedirect("jogo?action=listar");
+    }
+}

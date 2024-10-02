@@ -1,0 +1,8 @@
+public class ListarJogosServlet extends HttpServlet {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+        // Lógica para buscar os jogos do banco e enviar para a página JSP
+        RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
+        dispatcher.forward(request, response);
+    }
+}

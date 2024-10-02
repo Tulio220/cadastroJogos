@@ -1,0 +1,22 @@
+<%@page import="org.libertas.Jogo"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Jogo Salvo</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <jsp:useBean id="jdao" class="org.libertas.JogoDao" scope="request" />
+        <jsp:setProperty name="j" property="*" />
+        <jsp:scriptlet>
+            jdao.salvar(j);
+        </jsp:scriptlet>
+
+        <h1>Jogo salvo com sucesso</h1>
+        <a href="index.jsp" class="btn btn-primary">Início</a>
+    </div>
+</body>
+</html>

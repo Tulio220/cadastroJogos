@@ -1,0 +1,46 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
+<html>
+<head>
+    <title>Lista de Jogos</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+</head>
+<body>
+<jsp:useBean id="jogo" class="org.libertas.Jogo" scope="request" />
+<jsp:useBean id="jogoDao" class="org.libertas.JogoDao" scope="request" />
+<div class="container">
+    <h2 class="text-center">Lista de Jogos</h2>
+    <a href="adicionar.jsp" class="btn btn-primary">Adicionar Novo Jogo</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Plataforma</th>
+                <th>Gênero</th>
+                <th>Ano de Lançamento</th>
+            </tr>
+        </thead>
+        <tbody>
+           <c:forEach var="f" items="${jogoDao.listarJogos()}">
+				<tr>
+					<td class="text-center">${f.id}</td>
+					<td class="text-center">${f.nome}</td>
+					<td class="text-center">${f.plataforma}</td>
+					<td class="text-center">${f.genero}</td>
+					<td class="text-center">${f.anoLancamento}</td>
+					<td class="text-center">
+						<a href="formulario.jsp?id=${f.id}" class="btn btn-primary btn-sm btn-warning text-dark text-decoration-none">Alterar </a> 
+							
+						<a href="excluir.jsp?id=${f.id}" class="btn btn-primary btn-sm btn-danger text-dark text-decoration-none">Excluir</a>
+					</td>
+				</tr>
+			</c:forEach>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

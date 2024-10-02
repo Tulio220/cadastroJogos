@@ -1,0 +1,104 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+
+class Jogo {
+    private String nome;
+    private String genero;
+    private String plataforma;
+    private int anoLancamento;
+
+    // Getters e Setters
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getGenero() {
+        return genero;
+    }
+
+    public void setGenero(String genero) {
+        this.genero = genero;
+    }
+
+    public String getPlataforma() {
+        return plataforma;
+    }
+
+    public void setPlataforma(String plataforma) {
+        this.plataforma = plataforma;
+    }
+
+    public int getAnoLancamento() {
+        return anoLancamento;
+    }
+
+    public void setAnoLancamento(int anoLancamento) {
+        this.anoLancamento = anoLancamento;
+    }
+}
+
+
+
+class JogoDAO {
+    private List<Jogo> jogos = new ArrayList<>();
+
+    public void adicionar(Jogo jogo) {
+        jogos.add(jogo);
+    }
+
+    public List<Jogo> listarTodos() {
+        return jogos;
+    }
+}
+
+public class App {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        JogoDAO jogoDAO = new JogoDAO();
+
+        while (true) {
+            System.out.println("1. Cadastrar Jogo");
+            System.out.println("2. Listar Jogos");
+            System.out.println("0. Sair");
+            System.out.print("Escolha uma opção: ");
+            int opcao = scanner.nextInt();
+            scanner.nextLine(); // Limpar o buffer
+
+            if (opcao == 1) {
+                Jogo jogo = new Jogo();
+                System.out.print("Nome: ");
+                jogo.setNome(scanner.nextLine());
+                System.out.print("Gênero: ");
+                jogo.setGenero(scanner.nextLine());
+                System.out.print("Plataforma: ");
+                jogo.setPlataforma(scanner.nextLine());
+                System.out.print("Ano de Lançamento: ");
+                jogo.setAnoLancamento(scanner.nextInt());
+                scanner.nextLine(); // Limpar o buffer
+                jogoDAO.adicionar(jogo);
+                System.out.println("Jogo cadastrado com sucesso!\n");
+            } else if (opcao == 2) {
+                System.out.println("Lista de Jogos:");
+                for (Jogo j : jogoDAO.listarTodos()) {
+                    System.out.println("Nome: " + j.getNome() + ", Gênero: " + j.getGenero() + 
+                                       ", Plataforma: " + j.getPlataforma() + 
+                                       ", Ano: " + j.getAnoLancamento());
+                }
+                System.out.println();
+            } else if (opcao == 0) {
+                break;
+            } else {
+                System.out.println("Opção inválida!\n");
+            }
+        }
+
+        scanner.close();
+    }
+}

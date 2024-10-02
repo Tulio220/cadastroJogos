@@ -1,0 +1,33 @@
+<%@page import="org.libertas.*"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	
+	<%
+		JogoDao dao = new JogoDao();
+		Jogo j = new Jogo();
+		j.setId(Integer.parseInt(request.getParameter("id")));
+		j.setNome(request.getParameter("nome"));
+		j.setPlataforma(request.getParameter("plataforma"));
+		j.setgeenro(request.getParameter("genero"));
+		j.setAnoLancamento(request.getParameter("ano_lancamento"));
+		
+		//salva a pessoa
+		if (j.getId()>0){
+			dao.alterar(j);
+		}else{
+			dao.inserir(j);
+		}
+
+	%>
+	<h1>Jogo salvo com sucesso</h1>
+	<a href="index.jsp">Inicio</a>
+	
+</body>
+</html>

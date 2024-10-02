@@ -1,0 +1,11 @@
+INDEX VERSION 1.4+C:\Users\tulio\eclipse-teste\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
+2377468913.index
+2377468913.index
+3633088119.index
+4187132756.index
+1972766227.index
+1478314737.index
+3360417065.index
+3028642980.index
+1934377274.index
+3716991230.index

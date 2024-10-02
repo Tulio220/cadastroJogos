@@ -1,0 +1,47 @@
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class JogoDAO {
+    private Conexao conexao;
+
+    public JogoDAO() {
+        this.conexao = new Conexao();  
+    }
+
+    public List<Jogo> listarTodos() {
+        List<Jogo> jogos = new ArrayList<>();
+        Connection conn = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = conexao.getConnection();
+            String query = "SELECT * FROM jogos";
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                Jogo jogo = new Jogo();
+                jogo.setId(rs.getInt("id"));
+                jogo.setNome(rs.getString("nome"));
+                jogo.setGenero(rs.getString("genero"));
+                jogo.setPlataforma(rs.getString("plataforma"));
+                jogo.setAnoLancamento(rs.getInt("ano_lancamento"));
+                jogos.add(jogo);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
+                if (conn != null) conexao.desconecta();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return jogos;
+    }
+
+}

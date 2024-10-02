@@ -1,0 +1,49 @@
+<%@ page import="java.sql.*" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head>
+    <title>Lista de Jogos</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h2 class="text-center">Lista de Jogos</h2>
+    <a href="add_jogo.jsp" class="btn btn-primary">Adicionar Novo Jogo</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Plataforma</th>
+                <th>Gênero</th>
+                <th>Ano de Lançamento</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <%
+                Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/jogosdb", "root", "");
+                Statement stmt = con.createStatement();
+                ResultSet rs = stmt.executeQuery("SELECT * FROM jogos");
+                while (rs.next()) {
+            %>
+            <tr>
+                <td><%= rs.getInt("id") %></td>
+                <td><%= rs.getString("nome") %></td>
+                <td><%= rs.getString("plataforma") %></td>
+                <td><%= rs.getString("genero") %></td>
+                <td><%= rs.getInt("ano_lancamento") %></td>
+                <td>
+                    <a href="edit_jogo.jsp?id=<%= rs.getInt("id") %>" class="btn btn-warning">Editar</a>
+                    <a href="delete_jogo.jsp?id=<%= rs.getInt("id") %>" class="btn btn-danger">Excluir</a>
+                </td>
+            </tr>
+            <%
+                }
+                con.close();
+            %>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

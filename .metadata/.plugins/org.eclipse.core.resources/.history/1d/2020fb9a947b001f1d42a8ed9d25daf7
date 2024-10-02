@@ -1,0 +1,29 @@
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
+import java.io.IOException;
+import java.util.List;
+
+public class JogoServlet extends HttpServlet {
+    // Instancia o JogoDAO que já está usando a conexão configurada
+    private JogoDAO jogoDAO = new JogoDAO();
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action = request.getParameter("action");
+
+        if (action == null) {
+            listarJogos(request, response); // Se não houver ação, lista os jogos
+        } else {
+            // Aqui você pode adicionar a lógica para outras ações (adicionar, editar, remover)
+        }
+    }
+
+    // Método para listar os jogos no banco de dados e encaminhar para a página listar.jsp
+    private void listarJogos(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        List<Jogo> jogos = jogoDAO.listarTodos(); // Chama o método listarTodos do JogoDAO
+        request.setAttribute("jogos", jogos); // Adiciona os jogos como atributo na requisição
+        RequestDispatcher dispatcher = request.getRequestDispatcher("listar.jsp"); // Encaminha para a página listar.jsp
+        dispatcher.forward(request, response); // Realiza o encaminhamento da requisição e resposta
+    }
+}
+

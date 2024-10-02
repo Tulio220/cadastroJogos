@@ -1,0 +1,99 @@
+package org.libertas;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.LinkedList;
+import model.Jogo;
+
+public class JogoDao {
+    public void adicionarJogo(Jogo jogo){
+       Conexao con = new Conexao();
+       try {
+    	   String sql = "INSERT INTO jogos (nome, plataforma, genero, ano_lancamento)" + " VALUES (?,?,?,?)";
+    	   PreparedStatement prep = con.getConnection().prepareStatement(sql);
+    	   prep.setString(1, jogo.getNome());
+    	   prep.setString(2, jogo.getPlataforma());
+    	   prep.setString(3, jogo.getGenero());
+    	   prep.setInt(4, jogo.getAnoLancamento());
+    	   prep.execute();
+       }
+       catch(Exception e){
+    	   e.printStackTrace();
+       }
+       con.desconecta();
+    }
+
+    public LinkedList<Jogo> listarJogos() {
+    	LinkedList<Jogo> lista = new LinkedList<Jogo>();
+		Conexao con = new Conexao();
+		try {
+			String sql = "SELECT * FROM jogos ORDER BY nome";
+			Statement sta = con.getConnection().createStatement();
+			ResultSet res = sta.executeQuery(sql);
+			while (res.next()) {
+				Jogo f = new Jogo();
+				f.setId(res.getInt("id"));
+				f.setNome(res.getString("nome"));
+				f.setPlataforma(res.getString("plataforma"));
+				f.setGenero(res.getString("genero"));
+				f.setAnoLancamento(res.getInt("anoLancamento"));
+				lista.add(f);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		con.desconecta();
+		return lista;
+    }
+
+    public static void atualizarJogo(Jogo jogo) throws SQLException {
+        Connection con = Conexao.getConnection();
+        String sql = "UPDATE jogos SET nome=?, plataforma=?, genero=?, ano_lancamento=? WHERE id=?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, jogo.getNome());
+            ps.setString(2, jogo.getPlataforma());
+            ps.setString(3, jogo.getGenero());
+            ps.setInt(4, jogo.getAnoLancamento());
+            ps.setInt(5, jogo.getId());
+            ps.executeUpdate();
+        } finally {
+            con.close();
+        }
+    }
+
+    public static void excluirJogo(int id) throws SQLException {
+        Connection con = Conexao.getConnection();
+        String sql = "DELETE FROM jogos WHERE id=?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } finally {
+            con.close();
+        }
+    }
+
+    public static Jogo obterJogoPorId(int id) throws SQLException {
+        Connection con = Conexao.getConnection();
+        String sql = "SELECT * FROM jogos WHERE id=?";
+        Jogo jogo = null;
+        
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                jogo = new Jogo();
+                jogo.setId(rs.getInt("id"));
+                jogo.setNome(rs.getString("nome"));
+                jogo.setPlataforma(rs.getString("plataforma"));
+                jogo.setGenero(rs.getString("genero"));
+                jogo.setAnoLancamento(rs.getInt("ano_lancamento"));
+            }
+        } finally {
+            con.close();
+        }
+        
+        return jogo;
+    }
+}
+

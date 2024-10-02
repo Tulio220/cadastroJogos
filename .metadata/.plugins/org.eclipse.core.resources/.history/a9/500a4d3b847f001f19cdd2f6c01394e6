@@ -1,0 +1,115 @@
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import model.Jogo;
+
+@WebServlet("/jogo")
+public class JogoServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        String action = request.getParameter("action");
+
+        if (action == null || action.equals("listar")) {
+            try {
+                listarJogos(request, response);
+            } catch (SQLException e) {
+                e.printStackTrace();
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error");
+            }
+        } else {
+            switch (action) {
+                case "editar":
+                    try {
+                        editarJogo(request, response);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error");
+                    }
+                    break;
+                case "deletar":
+                    try {
+                        deletarJogo(request, response);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error");
+                    }
+                    break;
+                default:
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
+                    break;
+            }
+        }
+    }
+
+    private void listarJogos(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException, SQLException {
+        List<Jogo> jogos = JogoDAO.listarJogos();
+        request.setAttribute("jogos", jogos);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("listarJogos.jsp");
+        dispatcher.forward(request, response);
+    }
+
+    private void editarJogo(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException, SQLException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        Jogo jogo = JogoDAO.obterJogoPorId(id);
+
+        if (jogo != null) {
+            request.setAttribute("jogo", jogo);
+            RequestDispatcher dispatcher = request.getRequestDispatcher("editarJogo.jsp");
+            dispatcher.forward(request, response);
+        } else {
+            response.sendRedirect("jogo?action=listar");
+        }
+    }
+
+    private void deletarJogo(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, SQLException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        JogoDAO.excluirJogo(id);
+        response.sendRedirect("jogo?action=listar");
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String id = request.getParameter("id");
+        String nome = request.getParameter("nome");
+        String plataforma = request.getParameter("plataforma");
+        String genero = request.getParameter("genero");
+        int anoLancamento = Integer.parseInt(request.getParameter("anoLancamento"));
+
+        Jogo jogo;
+        if (id == null || id.isEmpty()) {
+            jogo = new Jogo(nome, plataforma, genero, anoLancamento);
+            try {
+                JogoDAO.adicionarJogo(jogo);
+            } catch (SQLException e) {
+                e.printStackTrace();
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error");
+                return;
+            }
+        } else {
+            int jogoId = Integer.parseInt(id);
+            jogo = new Jogo(jogoId, nome, plataforma, genero, anoLancamento);
+            try {
+                JogoDAO.atualizarJogo(jogo);
+            } catch (SQLException e) {
+                e.printStackTrace();
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error");
+                return;
+            }
+        }
+        
+        response.sendRedirect("jogo?action=listar");
+    }
+}

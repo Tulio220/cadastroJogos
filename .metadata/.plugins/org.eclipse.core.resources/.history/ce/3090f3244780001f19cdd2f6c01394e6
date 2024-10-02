@@ -1,0 +1,41 @@
+<%@ page import="java.sql.*" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head>
+    <title>Adicionar Jogo</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+</head>
+<body>
+	<%
+		int id = Integer.parseInt(request.getParameter("id"));
+		Jogo j = new Jogo();
+		JogoDao pdao = new JogoDao();
+		if (id > 0){
+			j = jdao.consultar(id);
+		} else {
+			j.setNome("");
+			j.setPlataforma("");
+			j.setGenero("");
+			j.setAnoLancamento("");;
+		}
+	 %>
+
+	<form action="gravar.jsp" method="post">
+			<input type="hidden" name="id" value="<%=j.getId() %>" />
+		
+			Nome:
+			<input type="text" name="nome" value="<%= j.getNome() %>"/>
+			<br/>
+			Plataforma:
+			<input type="text" name="plataforma" value="<%= j.getPlataforma() %>"/>
+			<br/>
+			Gênero:
+			<input type="text" name= "genero" value="<%= j.getGenero() %>"/>
+			<br/>
+			Ano Lançamento:
+			<input type="text" name="ano_lancamento" value="<%= j.getAnoLancamento() %>"/>
+			<br/>
+			<input type="submit" value="salvar"/>
+	</form>
+</body>
+</html>
